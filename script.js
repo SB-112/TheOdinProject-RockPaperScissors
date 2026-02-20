@@ -1,3 +1,10 @@
+let humanScore = 0;
+let computerScore = 0;
+const humanScoreDisplay = document.getElementById('your-score');
+const computerScoreDisplay = document.getElementById('computer-score');
+const winTextDisplay = document.getElementById('display');
+let round = 0;
+let gameOver = false;
 function getComputerChoice(){
     let choice = Math.floor(Math.random() * 3);
     switch (choice){
@@ -9,50 +16,53 @@ function getComputerChoice(){
             return "SCISSORS"
     }
 }
-
-function getHumanChoice(){
-    let humanChoice = prompt("What's your choice?: ")?.toUpperCase();
-    return humanChoice
+function changeDisplay(){
+    humanScoreDisplay.textContent = humanScore;
+    computerScoreDisplay.textContent = computerScore;
 }
 
-let humanScore = 0;
-let computerScore = 0;
+function resetGame(){
+    gameOver = false;
+    round = 0;
+    humanScore = 0;
+    computerScore = 0
+    changeDisplay();
+    winTextDisplay.textContent = "New Game has Started!!!";
+}
 
-function playRound(humanChoice, computerChoice){
+
+function playRound(humanChoice){
+    if(gameOver) return;
+
+    let computerChoice = getComputerChoice();
+
     if(humanChoice === computerChoice){
-        return "Draw";
-    }else if((humanChoice === "ROCK") && (computerChoice === "PAPER")){
+        winTextDisplay.textContent = "Draw!";
+    }else if((humanChoice === "ROCK") && (computerChoice === "PAPER") || 
+            (humanChoice === "PAPER") && (computerChoice === "SCISSORS") ||
+            (humanChoice === "SCISSORS") && (computerChoice === "ROCK")){
         computerScore++;
-        return "Computer Wins!";
-    }else if((humanChoice === "PAPER") && (computerChoice === "SCISSORS")){
-        computerScore++;
-        return "Computer Wins!";
-    }else if((humanChoice === "SCISSORS") && (computerChoice === "ROCK")){
-        computerScore++;
-        return "Computer Wins!";
+        changeDisplay();
+        winTextDisplay.textContent = "Computer Wins!";
     }else{
         humanScore++;
-        return "Human Wins!";
+        changeDisplay();
+        winTextDisplay.textContent = "Human Wins!";
+    }
+    round++;
+    if(round === 5){
+        gameOver = true;
+        if(humanScore === computerScore){
+            winTextDisplay.textContent = "Final Result: It's a Draw!";
+        }else if(humanScore > computerScore){
+            winTextDisplay.textContent = "Final Result: Human Wins!";
+        }else{
+            winTextDisplay.textContent = "Final Result: Computer Wins!";
+        }
+        setTimeout(resetGame, 2000);
     }
 }
 
-function playGame(){
-    for(let i = 0; i < 5; i++){
-        const humanSelection = getHumanChoice();
-        const computerSelection = getComputerChoice();
-        alert(playRound(humanSelection, computerSelection));
-        alert(`Current Score:\n Human: ${humanScore}\n Computer: ${computerScore}`);
-    }
-    if(humanScore > computerScore){
-        alert("Human is the WINNER!");
-    }else if(computerScore > humanScore){
-        alert("Computer is the WINNER!");
-    }else{
-        alert("Game is a DRAW");
-    }
-}
-
-playGame(); 
 
 
 
